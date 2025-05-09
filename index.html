@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zentra DAO Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Zentra DAO DApp</h1>
+    <button id="connectBtn" onclick="connectWallet()">🔌 Connect Wallet</button>
+    <div id="wallet">Not connected</div>
+  </header>
+
+  <main>
+    <section>
+      <h2>📊 내 자산 정보</h2>
+      <p>ZENTRA 잔액: <span id="zentraBalance">-</span></p>
+      <p>USDT 잔액: <span id="usdtBalance">-</span></p>
+      <p>스테이킹 중: <span id="stakedAmount">-</span></p>
+      <p>예상 리워드: <span id="expectedReward">-</span></p>
+    </section>
+
+    <section>
+      <h2>🧱 민팅</h2>
+      <input id="mintAmount" placeholder="ZENTRA 수량" />
+      <button onclick="mint()">Mint</button>
+    </section>
+
+    <section>
+      <h2>🪙 스테이킹</h2>
+      <input id="stakeAmount" placeholder="스테이킹 수량" />
+      <button onclick="stake()">Stake</button>
+    </section>
+
+    <section>
+      <h2>💸 채권 구매</h2>
+      <select id="bondType">
+        <option value="0">유동성</option>
+        <option value="1">스테이블</option>
+      </select>
+      <select id="bondDays">
+        <option value="30">30일</option>
+        <option value="60">60일</option>
+        <option value="90">90일</option>
+      </select>
+      <input id="bondAmount" placeholder="USDT 수량" />
+      <button onclick="buyBond()">Buy Bond</button>
+    </section>
+
+    <section>
+      <h2>📥 채권 수령</h2>
+      <input id="bondId" placeholder="Bond ID" />
+      <button onclick="claimBond()">Claim</button>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

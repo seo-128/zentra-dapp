@@ -1,0 +1,35 @@
+
+body {
+  background: #111;
+  color: white;
+  font-family: sans-serif;
+  padding: 1rem;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1a1a1a;
+  padding: 1rem;
+}
+main {
+  margin-top: 1rem;
+}
+section {
+  background: #222;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 6px;
+}
+input, select, button {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+button {
+  background: #38f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
