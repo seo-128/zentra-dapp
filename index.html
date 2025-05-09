@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zentra DAO DApp</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+</head>
+<body style="font-family:sans-serif;padding:2rem;background-color:#111;color:#eee">
+  <h1>Zentra DAO 테스트 DApp</h1>
+  <div>
+    <button onclick="connectWallet()">🔌 지갑 연결</button>
+    <div id="wallet">지갑 상태: 연결되지 않음</div>
+  </div>
+
+  <div style="margin-top:2rem">
+    <h2>1️⃣ 민팅</h2>
+    <input id="mintAmount" placeholder="민팅 수량 (ZENTRA)" />
+    <button onclick="mint()">Mint</button>
+  </div>
+
+  <div style="margin-top:2rem">
+    <h2>2️⃣ 스테이킹</h2>
+    <input id="stakeAmount" placeholder="스테이킹 수량" />
+    <button onclick="stake()">Stake</button>
+  </div>
+
+  <div style="margin-top:2rem">
+    <h2>3️⃣ 채권 구매</h2>
+    <select id="bondType">
+      <option value="0">유동성 채권</option>
+      <option value="1">스테이블 채권</option>
+    </select>
+    <select id="bondDays">
+      <option value="30">30일</option>
+      <option value="60">60일</option>
+      <option value="90">90일</option>
+      <option value="180">180일</option>
+      <option value="360">360일</option>
+    </select>
+    <input id="bondAmount" placeholder="USDT 수량" />
+    <button onclick="buyBond()">Buy Bond</button>
+  </div>
+
+  <div style="margin-top:2rem">
+    <h2>4️⃣ 채권 수령</h2>
+    <input id="bondId" placeholder="채권 ID" />
+    <button onclick="claimBond()">Claim</button>
+  </div>
+
+<script>
+let provider, signer, contract;
+const contractAddress = "0x570053837ced3c7e64006B8Cdd8E8468d186f049"; // 실제 배포된 ZentraToken 주소
+const abi = []; // 실제 ABI 삽입 필요 (요청에 따라 대체 가능)
+
+async function connectWallet() {
+  if (!window.ethereum) {
+    alert("MetaMask 또는 Web3 지갑이 감지되지 않았습니다.");
+    return;
+  }
+  provider = new ethers.providers.Web3Provider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  signer = provider.getSigner();
+  const user = await signer.getAddress();
+  document.getElementById("wallet").innerText = "지갑: " + user;
+  contract = new ethers.Contract(contractAddress, abi, signer);
+}
+
+async function mint() {
+  const amt = document.getElementById("mintAmount").value;
+  const tx = await contract.mintWithUSDT(await signer.getAddress(), ethers.utils.parseUnits(amt, 18));
+  await tx.wait();
+  alert("✅ 민팅 완료");
+}
+
+async function stake() {
+  const amt = document.getElementById("stakeAmount").value;
+  const tx = await contract.stake(ethers.utils.parseUnits(amt, 18));
+  await tx.wait();
+  alert("✅ 스테이킹 완료");
+}
+
+async function buyBond() {
+  const type = document.getElementById("bondType").value;
+  const days = document.getElementById("bondDays").value;
+  const amt = document.getElementById("bondAmount").value;
+  const tx = await contract.buyBond(type, days, ethers.utils.parseUnits(amt, 18));
+  await tx.wait();
+  alert("✅ 채권 구매 완료");
+}
+
+async function claimBond() {
+  const id = document.getElementById("bondId").value;
+  const tx = await contract.claimBond(id);
+  await tx.wait();
+  alert("✅ 채권 수령 완료");
+}
+</script>
+</body>
+</html>
