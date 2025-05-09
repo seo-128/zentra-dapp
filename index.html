@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zentra DAO DApp</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+</head>
+<body style="font-family: sans-serif; background: #0b0b13; color: white; padding: 1rem;">
+  <h1>Zentra DAO Web3 테스트 DApp</h1>
+  <p id="wallet">지갑 연결 안 됨</p>
+  <button onclick="connectWallet()">🔌 Connect Wallet</button>
+
+  <h2>Mint</h2>
+  <input id="mintAmount" placeholder="Amount" />
+  <button onclick="mint()">Mint</button>
+
+  <h2>Stake</h2>
+  <input id="stakeAmount" placeholder="Amount to stake" />
+  <button onclick="stake()">Stake</button>
+
+  <h2>Buy Bond</h2>
+  <select id="bondType">
+    <option value="0">Liquidity</option>
+    <option value="1">Stable</option>
+  </select>
+  <select id="bondDays">
+    <option value="30">30 days</option>
+    <option value="60">60 days</option>
+    <option value="90">90 days</option>
+    <option value="180">180 days</option>
+    <option value="360">360 days</option>
+  </select>
+  <input id="bondAmount" placeholder="USDT amount" />
+  <button onclick="buyBond()">Buy Bond</button>
+
+  <h2>Claim Bond</h2>
+  <input id="bondId" placeholder="Bond ID" />
+  <button onclick="claimBond()">Claim</button>
+
+<script>
+let provider, signer, contract, userAddress;
+const CONTRACT_ADDRESS = "0x570053837ced3c7e64006B8Cdd8E8468d186f049";
+const ABI = [
+  {
+    "inputs":[
+      {"internalType":"address","name":"user","type":"address"},
+      {"internalType":"uint256","name":"amount","type":"uint256"}
+    ],
+    "name":"mintWithUSDT",
+    "outputs":[],
+    "stateMutability":"nonpayable",
+    "type":"function"
+  },
+  {
+    "inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],
+    "name":"stake",
+    "outputs":[],
+    "stateMutability":"nonpayable",
+    "type":"function"
+  },
+  {
+    "inputs":[
+      {"internalType":"uint8","name":"bondType","type":"uint8"},
+      {"internalType":"uint256","name":"durationInDays","type":"uint256"},
+      {"internalType":"uint256","name":"usdtAmount","type":"uint256"}
+    ],
+    "name":"buyBond",
+    "outputs":[],
+    "stateMutability":"nonpayable",
+    "type":"function"
+  },
+  {
+    "inputs":[{"internalType":"uint256","name":"bondId","type":"uint256"}],
+    "name":"claimBond",
+    "outputs":[],
+    "stateMutability":"nonpayable",
+    "type":"function"
+  }
+];
+
+async function connectWallet() {
+  if (!window.ethereum) return alert("MetaMask not detected.");
+  provider = new ethers.providers.Web3Provider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  signer = provider.getSigner();
+  userAddress = await signer.getAddress();
+  document.getElementById("wallet").innerText = "🔗 지갑 연결됨: " + userAddress;
+  contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+}
+
+async function mint() {
+  const amount = document.getElementById("mintAmount").value;
+  const tx = await contract.mintWithUSDT(userAddress, ethers.utils.parseUnits(amount, 18));
+  await tx.wait();
+  alert("✅ Mint 완료");
+}
+
+async function stake() {
+  const amount = document.getElementById("stakeAmount").value;
+  const tx = await contract.stake(ethers.utils.parseUnits(amount, 18));
+  await tx.wait();
+  alert("✅ Stake 완료");
+}
+
+async function buyBond() {
+  const bondType = document.getElementById("bondType").value;
+  const bondDays = document.getElementById("bondDays").value;
+  const amount = document.getElementById("bondAmount").value;
+  const tx = await contract.buyBond(bondType, bondDays, ethers.utils.parseUnits(amount, 18));
+  await tx.wait();
+  alert("✅ Bond 구매 완료");
+}
+
+async function claimBond() {
+  const id = document.getElementById("bondId").value;
+  const tx = await contract.claimBond(id);
+  await tx.wait();
+  alert("✅ Bond 수령 완료");
+}
+</script>
+</body>
+</html>
